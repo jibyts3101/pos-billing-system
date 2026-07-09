@@ -1,1 +1,0 @@
-package om.pos.posbillingsystem.product.entity;

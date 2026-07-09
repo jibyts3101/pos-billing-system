@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         String username = jwtService.extractUsername(token);
+        System.out.println("Username from token: " + username);
 
         if (username != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -57,8 +58,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .findByUsername(username)
                     .orElse(null);
 
-            if (user != null &&
-                    jwtService.validateToken(token, username)) {
+            System.out.println("User found: " + user);
+
+            boolean valid = jwtService.validateToken(token, username);
+            System.out.println("Token valid: " + valid);
+
+            if (user != null && valid) {
 
                 var authToken =
                         new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
@@ -73,6 +78,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder
                         .getContext()
                         .setAuthentication(authToken);
+
+                System.out.println("Authentication SUCCESS");
             }
         }
 
