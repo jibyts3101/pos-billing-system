@@ -25,6 +25,8 @@ import com.pos.posbillingsystem.billing.enums.PaymentStatus;
 import com.pos.posbillingsystem.customer.entity.Customer;
 import com.pos.posbillingsystem.product.entity.Product;
 import com.pos.posbillingsystem.user.entity.User;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 @Service
 public class BillingService {
 
@@ -254,6 +256,122 @@ public class BillingService {
 
         return response;
     }
+    public List<BillResponse> getBillsByCustomer(Integer customerId) {
+
+        List<Bill> bills = billRepository.findByCustomerId(customerId);
+
+        List<BillResponse> responses = new ArrayList<>();
+
+        for (Bill bill : bills) {
+
+            BillResponse response = mapToResponse(bill);
+
+            List<BillItem> billItems = billItemRepository.findByBillId(bill.getBillId());
+
+            List<BillItemResponse> itemResponses = new ArrayList<>();
+
+            for (BillItem item : billItems) {
+
+                BillItemResponse dto = new BillItemResponse();
+
+                dto.setProductId(item.getProductId());
+                dto.setProductName(item.getProductName());
+                dto.setQuantity(item.getQuantity());
+                dto.setUnitPrice(item.getUnitPrice());
+                dto.setDiscount(item.getDiscount());
+                dto.setGstPercentage(item.getGstPercentage());
+                dto.setTotalPrice(item.getTotalPrice());
+
+                itemResponses.add(dto);
+            }
+
+            response.setItems(itemResponses);
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+    public List<BillResponse> getBillsByDate(LocalDate date) {
+
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.atTime(23, 59, 59);
+
+        List<Bill> bills = billRepository.findByBillDateBetween(start, end);
+
+        List<BillResponse> responses = new ArrayList<>();
+
+        for (Bill bill : bills) {
+
+            BillResponse response = mapToResponse(bill);
+
+            List<BillItem> billItems = billItemRepository.findByBillId(bill.getBillId());
+
+            List<BillItemResponse> itemResponses = new ArrayList<>();
+
+            for (BillItem item : billItems) {
+
+                BillItemResponse dto = new BillItemResponse();
+
+                dto.setProductId(item.getProductId());
+                dto.setProductName(item.getProductName());
+                dto.setQuantity(item.getQuantity());
+                dto.setUnitPrice(item.getUnitPrice());
+                dto.setDiscount(item.getDiscount());
+                dto.setGstPercentage(item.getGstPercentage());
+                dto.setTotalPrice(item.getTotalPrice());
+
+                itemResponses.add(dto);
+            }
+
+            response.setItems(itemResponses);
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+    public List<BillResponse> getBillsBetweenDates(LocalDate startDate,
+            LocalDate endDate) {
+
+LocalDateTime start = startDate.atStartOfDay();
+LocalDateTime end = endDate.atTime(23, 59, 59);
+
+List<Bill> bills = billRepository.findByBillDateBetween(start, end);
+
+List<BillResponse> responses = new ArrayList<>();
+
+for (Bill bill : bills) {
+
+BillResponse response = mapToResponse(bill);
+
+List<BillItem> billItems =
+billItemRepository.findByBillId(bill.getBillId());
+
+List<BillItemResponse> itemResponses = new ArrayList<>();
+
+for (BillItem item : billItems) {
+
+BillItemResponse dto = new BillItemResponse();
+
+dto.setProductId(item.getProductId());
+dto.setProductName(item.getProductName());
+dto.setQuantity(item.getQuantity());
+dto.setUnitPrice(item.getUnitPrice());
+dto.setDiscount(item.getDiscount());
+dto.setGstPercentage(item.getGstPercentage());
+dto.setTotalPrice(item.getTotalPrice());
+
+itemResponses.add(dto);
+}
+
+response.setItems(itemResponses);
+
+responses.add(response);
+}
+
+return responses;
+}
     private Customer validateCustomer(Integer customerId) {
 
         if (customerId == null) {

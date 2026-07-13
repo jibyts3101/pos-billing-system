@@ -7,6 +7,7 @@ import java.util.List;
 import com.pos.posbillingsystem.billing.dto.BillRequest;
 import com.pos.posbillingsystem.billing.dto.BillResponse;
 import com.pos.posbillingsystem.billing.service.BillingService;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/billing")
@@ -33,6 +34,28 @@ public class BillingController {
         BillResponse response = billingService.getBillByInvoice(invoice);
 
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<BillResponse>> getBillsByCustomer(
+            @PathVariable Integer customerId) {
+
+        return ResponseEntity.ok(
+                billingService.getBillsByCustomer(customerId));
+    }
+    @GetMapping("/date")
+    public ResponseEntity<List<BillResponse>> getBillsByDate(
+            @RequestParam LocalDate date) {
+
+        return ResponseEntity.ok(
+                billingService.getBillsByDate(date));
+    }
+    @GetMapping("/date-range")
+    public ResponseEntity<List<BillResponse>> getBillsBetweenDates(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+
+        return ResponseEntity.ok(
+                billingService.getBillsBetweenDates(startDate, endDate));
     }
     @GetMapping("/{billId}")
     public ResponseEntity<BillResponse> getBill(
